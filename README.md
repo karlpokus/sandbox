@@ -9,6 +9,11 @@ A sandbox tools lab
 $ path/to/firecracker --no-api --config-file firecracker.json
 ````
 
-- [ ] pick another kernel and fs
+- [x] pick another kernel and fs like BusyBox v1.36.1, linux 6.12.58
+
+````sh
+$ path/to/firecracker --no-api --config-file firecracker-custom.json
+````
+
 - [ ] try jailer
 - [ ] use --api-sock and --enable-pci
