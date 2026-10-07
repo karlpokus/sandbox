@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tiny-model
+spec:
+  replicas: 0
+  selector:
+    matchLabels:
+      app: tiny-model
+  template:
+    metadata:
+      labels:
+        app: tiny-model
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: llama-server
+          image: ghcr.io/ggml-org/llama.cpp:server
+          imagePullPolicy: Never
+          # This sets one slot, enough context for the observed ~7,800-token prompt plus output,
+          # and smaller processing batches. --cache-ram 0 disables the additional prompt cache;
+          # it does not disable the essential KV cache. These settings aim to reduce memory pressure
+          #
+          # The model is https://huggingface.co/ggml-org/Qwen3-0.6B-GGUF/tree/main
+          args:
+            - --model
+            - /models/Qwen3-0.6B-Q4_0.gguf
+            - --alias
+            - tiny-model
+            - --host
+            - "0.0.0.0"
+            - --port
+            - "8080"
+            - --ctx-size
+            - "12288"
+            - --parallel
+            - "1"
+            - --threads
+            - "2"
+            - --threads-batch
+            - "2"
+            - --batch-size
+            - "256"
+            - --ubatch-size
+            - "128"
+            - --cache-ram
+            - "0"            
+            - --jinja
+          ports:
+            - name: http
+              containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          volumeMounts:
+            - name: models
+              mountPath: /models
+              readOnly: true
+      volumes:
+        - name: models
+          hostPath:
+            path: /data/models
+            type: Directory
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tiny-model
+spec:
+  selector:
+    app: tiny-model
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

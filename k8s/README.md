@@ -6,4 +6,7 @@ The same controller pattern as a Deployment managing pods: the Sandbox adds life
 
 - [x] Sandbox with dumb heartbeat container
 - [x] Sandbox with gvisor
+- [x] Sandbox, gvisor, opencode and tiny model
 - [ ] KubeVirt addon?
+- [ ] secret mgmt
+- [ ] API access to git and registry

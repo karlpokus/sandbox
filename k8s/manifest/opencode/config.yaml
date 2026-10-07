@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opencode-config
+data:
+  opencode.json: |
+    {
+      "$schema": "https://opencode.ai/config.json",
+      "model": "local/tiny-model",
+      "small_model": "local/tiny-model",
+      "enabled_providers": ["local"],
+      "compaction": {
+        "auto": false
+      },
+      "provider": {
+        "local": {
+          "npm": "@ai-sdk/openai-compatible",
+          "name": "Local llama.cpp",
+          "options": {
+            "baseURL": "http://tiny-model:8080/v1"
+          },
+          "models": {
+            "tiny-model": {
+              "name": "Qwen3 0.6B",
+              "limit": {
+                "context": 12288,
+                "output": 512
+              }
+            }
+          }
+        }
+      }
+    }

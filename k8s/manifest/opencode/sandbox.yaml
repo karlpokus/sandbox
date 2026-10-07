@@ -1,0 +1,58 @@
+apiVersion: agents.x-k8s.io/v1beta1
+kind: Sandbox
+metadata:
+  name: opencode
+spec:
+  podTemplate:
+    spec:
+      runtimeClassName: gvisor
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: opencode
+          image: ghcr.io/anomalyco/opencode:1.18.31
+          imagePullPolicy: Never
+          workingDir: /workspace
+          args:
+            - --print-logs
+            - --log-level
+            - DEBUG
+            - "serve"
+            - "--hostname"
+            - "0.0.0.0"
+            - "--port"
+            - "4096"
+          env:
+            - name: HOME
+              value: /home/opencode
+            - name: OPENCODE_CONFIG
+              value: /etc/opencode/opencode.json
+          ports:
+            - name: http
+              containerPort: 4096
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: workspace
+              mountPath: /workspace
+            - name: home
+              mountPath: /home/opencode
+            - name: config
+              mountPath: /etc/opencode
+              readOnly: true
+      volumes:
+        - name: workspace
+          emptyDir: {}
+        - name: home
+          emptyDir: {}
+        - name: config
+          configMap:
+            name: opencode-config
