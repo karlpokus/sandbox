@@ -15,5 +15,10 @@ $ path/to/firecracker --no-api --config-file firecracker.json
 $ path/to/firecracker --no-api --config-file firecracker-custom.json
 ````
 
+- [ ] vsock (initial tests on local branch cf/vsock)
 - [ ] try jailer
 - [ ] use --api-sock and --enable-pci
+
+# k8s sandbox
+
+See k8s dir.
