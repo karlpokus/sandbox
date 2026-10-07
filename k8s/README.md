@@ -5,3 +5,5 @@ The same controller pattern as a Deployment managing pods: the Sandbox adds life
 # Tests
 
 - [x] Sandbox with dumb heartbeat container
+- [x] Sandbox with gvisor
+- [ ] KubeVirt addon?
